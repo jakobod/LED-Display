@@ -3,7 +3,7 @@
 //
 
 #include <opencv2/core/mat.hpp>
-#include "Gem.h"
+#include "../snake/game/Gem.h"
 
 Gem::Gem(cv::Point pos) :
   pos_{pos},

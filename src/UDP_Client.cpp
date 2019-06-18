@@ -5,7 +5,7 @@
 #include <string>
 #include <iostream>
 #include <cv.hpp>
-#include "UDP_Client.h"
+#include "../snake/com/UDP_Client.h"
 
 UDP_Client::UDP_Client(std::string host, std::string port) {
   if(!init(host, port)) {

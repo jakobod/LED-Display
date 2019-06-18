@@ -4,7 +4,7 @@
 
 #include <opencv2/core/mat.hpp>
 #include <algorithm>
-#include "Snake.h"
+#include "../snake/game/Snake.h"
 
 Snake::Snake(std::vector<cv::Point> points, cv::Size size) :
   points_{std::move(points)},
@@ -33,7 +33,7 @@ bool Snake::step(cv::Point dir, Gem& gem) {
     gem.consume();
   } else {
     // shift all values
-    for (int i = 0; i < points_.size() - 1; ++i) {
+    for (size_t i = 0; i < points_.size() - 1; ++i) {
       points_[i] = points_[i + 1];
     }
     points_[points_.size() - 1] = tmp;
