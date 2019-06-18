@@ -18,7 +18,7 @@ public:
   Snake(std::vector<cv::Point> points, cv::Size size);
   ~Snake() = default;
 
-  void step(cv::Point dir, Gem& gem);
+  bool step(cv::Point dir, Gem& gem);
   void printTo(cv::Mat& mat, cv::Vec3b color);
 
 };

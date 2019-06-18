@@ -68,6 +68,7 @@ void weirdPattern(cv::Mat& pane, UDP_Client& client) {
       show(pane, client, 25);
     }
   }
+  show(pane, client, 1000);
 }
 
 Button direction(GAMEPAD_DEVICE dev) {
@@ -90,6 +91,14 @@ void placeGem(cv::Mat& mat, cv::Point pos) {
   mat.at<cv::Vec3b>(pos) = YELLOW;
 }
 
+void gameOver(cv::Mat& mat, UDP_Client& client, Printer printer) {
+  weirdPattern(mat, client);
+  mat = cv::Mat(mat.size(), mat.type(), cv::Scalar(0,0,0));
+  printer.printString(mat, "game", cv::Point(1,1), RED);
+  printer.printString(mat, "over", cv::Point(2,7), RED);
+  show(mat, client);
+}
+
 int main() {
   GamepadInit();
   UDP_Client client("192.168.178.28", "8888");
@@ -105,7 +114,7 @@ int main() {
 
   Gem gem(cv::Point(dist22(rng), dist12(rng)));
 
-  /*bool running = true;
+  bool running = true;
   while (running) {
     if (!gem)
       gem = Gem(cv::Point(dist22(rng), dist12(rng)));
@@ -137,40 +146,18 @@ int main() {
     }
 
     cv::Mat pane(cv::Size(23,13), CV_8UC3, cv::Scalar(0,0,0));
-    snake.step(dir, gem);
+    if(!snake.step(dir, gem)) {
+      running = false;
+    }
     gem.printTo(pane, YELLOW);
     snake.printTo(pane, RED);
 
     cv::imshow("de", pane);
     client.send(invert(pane));
-    cv::waitKey(1000);
-  }*/
-  cv::Mat pane(cv::Size(23,13), CV_8UC3, cv::Scalar(0,0,0));
-  printer.print(pane, 'a', cv::Point(1,1), RED);
-  printer.print(pane, 'g', cv::Point(5,5), RED);
-  show(pane, client);
-  //weirdPattern(pane, client);
-
-  cv::waitKey(2000);
-  client.send(CLEAR_IMG);
-
-  return 0;
-}
-/*
-int main() {
-  GamepadInit();
-  UDP_Client client("192.168.178.28", "8888");
+    cv::waitKey(500);
+  }
 
   cv::Mat pane(cv::Size(23,13), CV_8UC3, cv::Scalar(0,0,0));
-  Snake snake({cv::Point(1,1), cv::Point(1,2), cv::Point(1,3), cv::Point(2,3), cv::Point(3,3)});
-
-  snake.printTo(pane, YELLOW);
-
-
-  cv::namedWindow("de", cv::WINDOW_NORMAL);
-  cv::imshow("de", pane);
-  client.send(invert(pane));
-  cv::waitKey();
+  gameOver(pane, client, printer);
   return 0;
 }
-*/

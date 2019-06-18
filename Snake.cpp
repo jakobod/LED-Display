@@ -3,13 +3,14 @@
 //
 
 #include <opencv2/core/mat.hpp>
+#include <algorithm>
 #include "Snake.h"
 
 Snake::Snake(std::vector<cv::Point> points, cv::Size size) :
   points_{std::move(points)},
   size_{std::move(size)}{}
 
-void Snake::step(cv::Point dir, Gem& gem) {
+bool Snake::step(cv::Point dir, Gem& gem) {
   auto tmp = points_[points_.size()-1] + dir;
   if (tmp.x >= size_.width) {
     tmp.x -= size_.width;
@@ -22,6 +23,11 @@ void Snake::step(cv::Point dir, Gem& gem) {
     tmp.y = size_.height-1;
   }
 
+  auto it = std::find(points_.begin(), points_.end(), tmp);
+  if (it != points_.end() && it != points_.end()-1) {
+    return false;
+  }
+
   if(gem == points_[points_.size()-1]) {
     points_.push_back(tmp);
     gem.consume();
@@ -32,6 +38,7 @@ void Snake::step(cv::Point dir, Gem& gem) {
     }
     points_[points_.size() - 1] = tmp;
   }
+  return true;
 }
 
 void Snake::printTo(cv::Mat& pic, cv::Vec3b color) {
