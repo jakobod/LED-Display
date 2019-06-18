@@ -6,6 +6,7 @@
 #include <random>
 #include <input/xbox_controller.h>
 #include <misc/Color.h>
+#include <game/SnakeGame.h>
 
 #include "snake/com/UDP_Client.h"
 #include "snake/game/Snake.h"
@@ -51,10 +52,8 @@ void gameOver(cv::Mat& mat, UDP_Client& client) {
 }
 
 int main() {
-  xbox_controller controller;
-  UDP_Client client("192.168.178.28", "8888");
   cv::namedWindow("de", cv::WINDOW_NORMAL);
-  Snake snake({cv::Point(13,5)}, cv::Size(23,13));
+  SnakeGame game
   cv::Point dir(1,0);
 
 
@@ -63,7 +62,6 @@ int main() {
 
   }
 
-  cv::Mat pane(cv::Size(23,13), CV_8UC3, cv::Scalar(0,0,0));
-  gameOver(pane, client);
+
   return 0;
 }

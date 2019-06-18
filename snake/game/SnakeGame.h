@@ -26,7 +26,12 @@ class SnakeGame {
   std::uniform_int_distribution<int> dist12_;
 
 public:
-  SnakeGame() :
+  SnakeGame(std::string host, std::string port) :
+    gem_(cv::Point(13,2)),
+    snake_({cv::Point(13,5)}, cv::Size(23,13)),
+    input_(),
+    dir_(1,0),
+    client_(std::move(host), std::move(port)),
     dev_(),
     rng_(dev_),
     dist12_(0,12),
@@ -74,7 +79,6 @@ bool SnakeGame<InputDevice, Transmitter>::loop() {
   cv::imshow("de", pane);
   client_.send(Printer::invert(pane));
   cv::waitKey(500);
-
 
   return true;
 }
