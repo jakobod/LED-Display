@@ -43,19 +43,9 @@ void placeGem(cv::Mat& mat, cv::Point pos) {
   mat.at<cv::Vec3b>(pos) = Color::YELLOW;
 }
 
-void gameOver(cv::Mat& mat, UDP_Client& client) {
-  weirdPattern(mat, client);
-  mat = cv::Mat(mat.size(), mat.type(), cv::Scalar(0,0,0));
-  Printer::printString(mat, "game", cv::Point(1,1), Color::RED);
-  Printer::printString(mat, "over", cv::Point(2,7), Color::RED);
-  show(mat, client);
-}
-
 int main() {
   cv::namedWindow("de", cv::WINDOW_NORMAL);
-  SnakeGame game
-  cv::Point dir(1,0);
-
+  SnakeGame<xbox_controller, UDP_Client> game("", "");
 
   bool running = true;
   while (running) {

@@ -39,49 +39,49 @@ public:
 
   ~SnakeGame() = default;
 
-  bool loop();
+  bool loop() {
+    if (!gem_)
+      gem_ = Gem(cv::Point(dist22_(rng_), dist12_(rng_)));
+
+    direction d = input_.getDirection();
+    switch (d) {
+      case up:
+        dir_ = cv::Point(0, -1);
+        break;
+
+      case down:
+        dir_ = cv::Point(0, 1);
+        break;
+
+      case left:
+        dir_ = cv::Point(-1, 0);
+        break;
+
+      case right:
+        dir_ = cv::Point(1, 0);
+        break;
+
+      default:
+        break;
+    }
+
+    cv::Mat pane(cv::Size(23,13), CV_8UC3, cv::Scalar(0,0,0));
+    if(!snake_.step(dir_, gem_)) {
+      return false; // should display gameOver msg
+    }
+    gem_.printTo(pane, Color::YELLOW);
+    snake_.printTo(pane, Color::RED);
+
+    cv::imshow("de", pane);
+    client_.send(Printer::invert(pane));
+    cv::waitKey(500);
+
+    return true;
+  }
 };
 
 template<class InputDevice, class Transmitter>
-bool SnakeGame<InputDevice, Transmitter>::loop() {
-  if (!gem_)
-    gem_ = Gem(cv::Point(dist22_(rng_), dist12_(rng_)));
 
-  direction d = input_.getDirection();
-  switch (d) {
-    case up:
-      dir_ = cv::Point(0, -1);
-      break;
-
-    case down:
-      dir_ = cv::Point(0, 1);
-      break;
-
-    case left:
-      dir_ = cv::Point(-1, 0);
-      break;
-
-    case right:
-      dir_ = cv::Point(1, 0);
-      break;
-
-    default:
-      break;
-  }
-
-  cv::Mat pane(cv::Size(23,13), CV_8UC3, cv::Scalar(0,0,0));
-  if(!snake_.step(dir_, gem_)) {
-    return false; // should display gameOver msg
-  }
-  gem_.printTo(pane, Color::YELLOW);
-  snake_.printTo(pane, Color::RED);
-
-  cv::imshow("de", pane);
-  client_.send(Printer::invert(pane));
-  cv::waitKey(500);
-
-  return true;
-}
 
 
 #endif //XBOX_CONTROLLER_SNAKEGAME_H

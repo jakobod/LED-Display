@@ -17,6 +17,8 @@ public:
   static void printChar(cv::Mat& mat, char c, cv::Point p, cv::Vec3b color);
   static void printString(cv::Mat& mat, std::string str, cv::Point p, cv::Vec3b color);
   static cv::Mat invert(cv::Mat& mat);
+  template<class Transmitter>
+  static void gameOver(cv::Mat& mat, Transmitter& client);
 };
 
 

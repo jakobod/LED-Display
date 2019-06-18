@@ -3,6 +3,7 @@
 //
 
 #include <opencv2/core/mat.hpp>
+#include <misc/Color.h>
 #include "../snake/misc/Printer.h"
 
 const std::map<char, std::vector<cv::Point>> Printer::alphabet = {
@@ -128,4 +129,13 @@ cv::Mat Printer::invert(cv::Mat& mat) {
     }
   }
   return inv;
+}
+
+template<class Transmitter>
+void gameOver(cv::Mat& mat, Transmitter& client) {
+  weirdPattern(mat, client);
+  mat = cv::Mat(mat.size(), mat.type(), cv::Scalar(0,0,0));
+  Printer::printString(mat, "game", cv::Point(1,1), Color::RED);
+  Printer::printString(mat, "over", cv::Point(2,7), Color::RED);
+  show(mat, client);
 }
