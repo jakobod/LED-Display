@@ -13,7 +13,7 @@ public:
   xbox_controller();
   ~xbox_controller() = default;
 
-  direction getDirection() override;
+  void operator()() override;
 };
 
 

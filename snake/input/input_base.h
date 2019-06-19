@@ -14,7 +14,17 @@ enum direction {
 };
 
 class input_base {
-  virtual direction getDirection() = 0;
+protected:
+  bool running_;
+  direction input_;
+
+public:
+  input_base();
+  ~input_base() = default;
+
+  virtual direction getDirection();
+  virtual void operator()() = 0;
+  virtual void stop();
 };
 
 #endif //XBOX_CONTROLLER_INPUT_BASE_H

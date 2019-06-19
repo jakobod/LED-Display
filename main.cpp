@@ -7,12 +7,12 @@
 #include <input/xbox_controller.h>
 #include <misc/Color.h>
 #include <game/SnakeGame.h>
+#include <input/keyboard.h>
 
 #include "snake/com/UDP_Client.h"
 #include "snake/game/Snake.h"
 #include "snake/game/Gem.h"
 #include "snake/misc/Printer.h"
-
 
 
 void show(cv::Mat& pic, UDP_Client& client, int duration = 0) {
@@ -45,13 +45,14 @@ void placeGem(cv::Mat& mat, cv::Point pos) {
 
 int main() {
   cv::namedWindow("de", cv::WINDOW_NORMAL);
-  SnakeGame<xbox_controller, UDP_Client> game("", "");
+  SnakeGame<keyboard, UDP_Client> game("192.168.178.28", "8888");
 
   bool running = true;
   while (running) {
-
+    if (!game.loop()) {
+      running = false;
+    }
   }
-
-
+  std::cout << "game_over" << std::endl;
   return 0;
 }

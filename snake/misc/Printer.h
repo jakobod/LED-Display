@@ -17,8 +17,15 @@ public:
   static void printChar(cv::Mat& mat, char c, cv::Point p, cv::Vec3b color);
   static void printString(cv::Mat& mat, std::string str, cv::Point p, cv::Vec3b color);
   static cv::Mat invert(cv::Mat& mat);
+
   template<class Transmitter>
-  static void gameOver(cv::Mat& mat, Transmitter& client);
+  static void gameOver(cv::Mat& mat, Transmitter& client) {
+    weirdPattern(mat, client);
+    mat = cv::Mat(mat.size(), mat.type(), cv::Scalar(0,0,0));
+    Printer::printString(mat, "game", cv::Point(1,1), Color::RED);
+    Printer::printString(mat, "over", cv::Point(2,7), Color::RED);
+    show(mat, client);
+  }
 };
 
 

@@ -27,17 +27,19 @@ include_directories(${CURSES_INCLUDE_DIRS})
 find_package(OpenCV REQUIRED)
 include_directories(${OpenCV_INCLUDE_DIRS})
 
+find_package(Threads)
 
 add_executable(
   snake_game
   ${SRC_FILES}
   ${GAMEPAD_SRC_FILES}
   main.cpp
-    snake/misc/Color.cpp snake/misc/Color.h)
+  src/input_base.cpp src/keyboard.cpp snake/input/keyboard.h)
 
 target_link_libraries(snake_game
   ${UDEV_LIBRARIES}
   ${CURSES_LIBRARIES}
   ${OpenCV_LIBS}
+  ${CMAKE_THREAD_LIBS_INIT}
   m # this is for math calls
 )
