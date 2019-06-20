@@ -9,6 +9,7 @@ include_directories(gamepad)
 include_directories(snake)
 include_directories(snake/com)
 include_directories(snake/game)
+include_directories(snake/game/gamestate)
 include_directories(snake/input)
 include_directories(snake/misc)
 
@@ -34,7 +35,7 @@ add_executable(
   ${SRC_FILES}
   ${GAMEPAD_SRC_FILES}
   main.cpp
-  src/input_base.cpp src/keyboard.cpp snake/input/keyboard.h)
+)
 
 target_link_libraries(snake_game
   ${UDEV_LIBRARIES}

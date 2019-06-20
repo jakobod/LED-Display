@@ -40,29 +40,34 @@ public:
     rng_(dev_()),
     dist22_(0,22),
     dist12_(0,12)
-  {}
+  {
+    cv::namedWindow("gamePane", cv::WINDOW_NORMAL);
+  }
 
-  ~SnakeGame() = default;
+  ~SnakeGame() {
+    input_.stop();
+    t_input_.join();
+  };
 
   bool loop() {
     if (!gem_)
       gem_ = Gem(cv::Point(dist22_(rng_), dist12_(rng_)));
 
-    direction d = input_.getDirection();
+    input d = input_.getInput();
     switch (d) {
-      case up:
+      case input::up:
         dir_ = cv::Point(0, -1);
         break;
 
-      case down:
+      case input::down:
         dir_ = cv::Point(0, 1);
         break;
 
-      case left:
+      case input::left:
         dir_ = cv::Point(-1, 0);
         break;
 
-      case right:
+      case input::right:
         dir_ = cv::Point(1, 0);
         break;
 
@@ -78,10 +83,7 @@ public:
     gem_.printTo(pane, Color::YELLOW);
     snake_.printTo(pane, Color::RED);
 
-    cv::imshow("de", pane);
-    client_.send(Printer::invert(pane));
-    cv::waitKey(500);
-    //std::this_thread::sleep_for(std::chrono::milliseconds(500));
+    Printer::show(pane, client_, 500);
     return true;
   }
 };

@@ -5,24 +5,31 @@
 #ifndef XBOX_CONTROLLER_INPUT_BASE_H
 #define XBOX_CONTROLLER_INPUT_BASE_H
 
-enum direction {
+enum class input {
   up,
   down,
   left,
   right,
+  start,
+  select,
+  A,
+  B,
+  X,
+  Y,
+  menu,
   none,
 };
 
 class input_base {
 protected:
   bool running_;
-  direction input_;
+  input input_;
 
 public:
   input_base();
   ~input_base() = default;
 
-  virtual direction getDirection();
+  virtual input getInput();
   virtual void operator()() = 0;
   virtual void stop();
 };

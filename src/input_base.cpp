@@ -6,13 +6,13 @@
 
 input_base::input_base() :
   running_(true),
-  input_(none) {}
+  input_(input::none) {}
 
 void input_base::stop() {
   running_ = false;
 }
 
-direction input_base::getDirection() {
+input input_base::getInput() {
   return input_;
 }
 

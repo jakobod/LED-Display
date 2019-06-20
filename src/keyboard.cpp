@@ -17,16 +17,16 @@ void keyboard::operator()() {
   while (running_) {
     switch(getch()) {
       case KEY_UP:
-        input_ = up;
+        input_ = input::up;
         break;
       case KEY_DOWN:
-        input_ = down;
+        input_ = input::down;
         break;
       case KEY_LEFT:
-        input_ = left;
+        input_ = input::left;
         break;
       case KEY_RIGHT:
-        input_ = right;
+        input_ = input::right;
         break;
       default:
         break;
