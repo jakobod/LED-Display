@@ -6,12 +6,9 @@
 
 int main() {
   SnakeGame<keyboard, UDP_Client> game("192.168.178.28", "8888");
+  std::thread t_game(std::ref(game));
 
-  bool running = true;
-  while (running) {
-    running = game.loop();
-  }
-
+  t_game.join(); // wait for game to be over
   std::cout << "game_over" << std::endl;
   return 0;
 }

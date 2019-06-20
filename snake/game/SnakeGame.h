@@ -16,17 +16,10 @@
 
 template<class InputDevice, class Transmitter>
 class SnakeGame {
-  Gem gem_;
-  Snake snake_;
   InputDevice input_;
   std::thread t_input_;
-  cv::Point dir_;
   Transmitter client_;
-  std::random_device dev_;
-  std::mt19937 rng_;
-  std::uniform_int_distribution<int> dist22_;
-  std::uniform_int_distribution<int> dist12_;
-
+  bool running_;
 
 public:
   SnakeGame(std::string host, std::string port) :
@@ -39,7 +32,8 @@ public:
     dev_(),
     rng_(dev_()),
     dist22_(0,22),
-    dist12_(0,12)
+    dist12_(0,12),
+    running_(true)
   {
     cv::namedWindow("gamePane", cv::WINDOW_NORMAL);
   }
@@ -49,42 +43,10 @@ public:
     t_input_.join();
   };
 
-  bool loop() {
-    if (!gem_)
-      gem_ = Gem(cv::Point(dist22_(rng_), dist12_(rng_)));
+  void  operator()() {
+    while (running_) {
 
-    input d = input_.getInput();
-    switch (d) {
-      case input::up:
-        dir_ = cv::Point(0, -1);
-        break;
-
-      case input::down:
-        dir_ = cv::Point(0, 1);
-        break;
-
-      case input::left:
-        dir_ = cv::Point(-1, 0);
-        break;
-
-      case input::right:
-        dir_ = cv::Point(1, 0);
-        break;
-
-      default:
-        break;
     }
-
-    cv::Mat pane(cv::Size(23,13), CV_8UC3, cv::Scalar(0,0,0));
-    if(!snake_.step(dir_, gem_)) {
-      Printer::gameOver(pane, client_);
-      return false; // should display gameOver msg
-    }
-    gem_.printTo(pane, Color::YELLOW);
-    snake_.printTo(pane, Color::RED);
-
-    Printer::show(pane, client_, 500);
-    return true;
   }
 };
 

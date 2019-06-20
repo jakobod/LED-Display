@@ -13,7 +13,7 @@ public:
   initial_state();
   ~initial_state() = default;
 
-  void action(input in) override;
+  void action(input in, cv::Mat& mat) override;
 };
 
 
