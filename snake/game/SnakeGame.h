@@ -13,9 +13,12 @@
 #include "Snake.h"
 #include "input/input_base.h"
 #include <random>
+#include <game/gamestate/state_base.h>
+#include <game/gamestate/running_state.h>
 
 template<class InputDevice, class Transmitter>
 class SnakeGame {
+  state_base* state_;
   InputDevice input_;
   std::thread t_input_;
   Transmitter client_;
@@ -23,16 +26,10 @@ class SnakeGame {
 
 public:
   SnakeGame(std::string host, std::string port) :
-    gem_(cv::Point(13,2)),
-    snake_({cv::Point(13,5)}, cv::Size(23,13)),
+    state_(new running_state),
     input_(),
     t_input_(std::ref(input_)),
-    dir_(1,0),
     client_(std::move(host), std::move(port)),
-    dev_(),
-    rng_(dev_()),
-    dist22_(0,22),
-    dist12_(0,12),
     running_(true)
   {
     cv::namedWindow("gamePane", cv::WINDOW_NORMAL);
@@ -45,7 +42,16 @@ public:
 
   void  operator()() {
     while (running_) {
-
+      cv::Mat field(cv::Size(23,13), CV_8UC3, cv::Scalar(0,0,0));
+      auto new_state = state_->action(input_.getInput(), field);
+      if (new_state != state_) {
+        delete state_;
+        state_ = new_state;
+      }
+      if (state_ == nullptr) {
+        running_ = false;
+      }
+      Printer::show(field, client_, 500);
     }
   }
 };

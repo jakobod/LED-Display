@@ -9,6 +9,7 @@
 #include <map>
 #include <opencv2/core/types.hpp>
 #include <opencv2/highgui.hpp>
+#include <misc/Color.h>
 
 class Printer {
   static const std::map<char, std::vector<cv::Point>> alphabet;
@@ -17,6 +18,8 @@ public:
 
   static void printChar(cv::Mat& mat, char c, cv::Point p, cv::Vec3b color);
   static void printString(cv::Mat& mat, std::string str, cv::Point p, cv::Vec3b color);
+
+
   static cv::Mat invert(cv::Mat& mat);
 
   template <class Transmitter>
@@ -32,10 +35,19 @@ public:
         if (countMod == 2)
           pane.at<cv::Vec3b>(y, x) = Color::BLUE;
         ++count;
-        show(pane, client, 25);
+        show(pane, client, 5);
       }
     }
     show(pane, client, 1000);
+  }
+
+  template <class Transmitter>
+  static void shiftText(std::string str, Transmitter& client) {
+    for (int i = 0; i < 23+(str.size()*4); ++i) {
+      cv::Mat mat(cv::Size(23,13), CV_8UC3, cv::Scalar(0,0,0));
+      printString(mat, str, cv::Point(22-i, 5), Color::BLUE);
+      show(mat, client, 500);
+    }
   }
 
 
@@ -45,7 +57,7 @@ public:
     mat = cv::Mat(mat.size(), mat.type(), cv::Scalar(0,0,0));
     Printer::printString(mat, "game", cv::Point(3,1), Color::RED);
     Printer::printString(mat, "over", cv::Point(4,7), Color::RED);
-    show(mat, client);
+    show(mat, client, 1000);
   }
 
   template <class Transmitter>

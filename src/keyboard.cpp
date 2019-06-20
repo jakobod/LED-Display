@@ -15,7 +15,8 @@ keyboard::keyboard() : input_base() {
 
 void keyboard::operator()() {
   while (running_) {
-    switch(getch()) {
+    auto c = getch();
+    switch(c) {
       case KEY_UP:
         input_ = input::up;
         break;
@@ -28,7 +29,15 @@ void keyboard::operator()() {
       case KEY_RIGHT:
         input_ = input::right;
         break;
+      case 10:
+        input_ = input::start;
+        break;
+      case 27:
+        input_ = input::menu;
+        break;
+
       default:
+        std::cout << "unknown input = " << c << std::endl;
         break;
     }
   }

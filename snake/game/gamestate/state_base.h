@@ -11,9 +11,9 @@
 class state_base {
 public:
   state_base() = default;
-  ~state_base() = default;
+  virtual ~state_base() = default;
 
-  virtual void action(input in, cv::Mat& mat) = 0;
+  virtual state_base* action(input in, cv::Mat& mat) = 0;
 };
 
 #endif //SNAKE_GAME_STATE_BASE_H

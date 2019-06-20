@@ -95,14 +95,25 @@ const std::map<char, std::vector<cv::Point>> Printer::alphabet = {
 
     {'z', {cv::Point(0,0), cv::Point(1,0), cv::Point(2,1), cv::Point(2,0), cv::Point(0,3),
            cv::Point(1,2), cv::Point(0,4), cv::Point(1,4), cv::Point(2,4)}},
+
+    {' ', {}},
 };
 
 const cv::Mat Printer::CLEAR_IMG(cv::Size(23,13), CV_8UC3, cv::Scalar(0,0,0));
 
 void Printer::printChar(cv::Mat& mat, char c, cv::Point offset, cv::Vec3b color) {
+  if (c >= 'A' && c <= 'Z') {
+    c += 20;
+  }
+
   auto& points = alphabet.at(c);
-  for (const auto& p : points)
-    mat.at<cv::Vec3b>(p+offset) = color;
+  for (const auto& point : points) {
+    auto p = point + offset;
+    if (0 <= p.x && p.x < mat.cols &&
+        0 <= p.y && p.y < mat.rows) {
+      mat.at<cv::Vec3b>(p) = color;
+    }
+  }
 }
 
 void Printer::printString(cv::Mat& mat, std::string str, cv::Point p, cv::Vec3b color) {

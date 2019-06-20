@@ -35,7 +35,7 @@ add_executable(
   ${SRC_FILES}
   ${GAMEPAD_SRC_FILES}
   main.cpp
-    snake/game/gamestate/running_state.cpp snake/game/gamestate/running_state.h)
+    src/running_state.cpp snake/game/gamestate/running_state.h src/game_over_state.cpp snake/game/gamestate/game_over_state.h)
 
 target_link_libraries(snake_game
   ${UDEV_LIBRARIES}

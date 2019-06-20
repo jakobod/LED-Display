@@ -9,12 +9,6 @@ initial_state::initial_state() {
 
 }
 
-void initial_state::action(input in, cv::Mat& mat) {
-  Printer::printString(mat, "");
-  switch (in) {
-
-
-    default:
-      break;
-  }
+state_base* initial_state::action(input in, cv::Mat& mat) {
+  return this;
 }
