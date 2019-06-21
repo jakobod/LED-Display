@@ -5,31 +5,34 @@
 #ifndef XBOX_CONTROLLER_SNAKEGAME_H
 #define XBOX_CONTROLLER_SNAKEGAME_H
 
-#include <misc/Color.h>
-#include <cv.hpp>
-#include <misc/Printer.h>
 #include <thread>
-#include "Gem.h"
-#include "Snake.h"
 #include "input/input_base.h"
 #include <random>
 #include <game/gamestate/state_base.h>
 #include <game/gamestate/running_state.h>
+#include <game/gamestate/initial_state.h>
+#include <iostream>
 
 template<class InputDevice, class Transmitter>
 class SnakeGame {
-  state_base* state_;
   InputDevice input_;
   std::thread t_input_;
   Transmitter client_;
+  std::vector<state_base<InputDevice, Transmitter>*> states_;
+  state state_;
   bool running_;
 
 public:
   SnakeGame(std::string host, std::string port) :
-    state_(new running_state),
     input_(),
     t_input_(std::ref(input_)),
     client_(std::move(host), std::move(port)),
+    states_{
+      new initial_state<InputDevice, Transmitter>(input_, client_),
+      new running_state<InputDevice, Transmitter>(input_, client_),
+      new game_over_state<InputDevice, Transmitter>(input_, client_),
+    },
+    state_(state::initial),
     running_(true)
   {
     cv::namedWindow("gamePane", cv::WINDOW_NORMAL);
@@ -42,17 +45,11 @@ public:
 
   void  operator()() {
     while (running_) {
-      cv::Mat field(cv::Size(23,13), CV_8UC3, cv::Scalar(0,0,0));
-      auto new_state = state_->action(input_.getInput(), field);
-      if (new_state != state_) {
-        delete state_;
-        state_ = new_state;
-      }
-      if (state_ == nullptr) {
-        running_ = false;
-      }
-      Printer::show(field, client_, 500);
+      state_ = states_[static_cast<int>(state_)]->action();
+      if(state_ == state::end) running_ = false;
+      states_[static_cast<int>(state_)]->reset();
     }
+    std::cout << "THE END!" << std::endl;
   }
 };
 

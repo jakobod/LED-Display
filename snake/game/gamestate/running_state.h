@@ -13,50 +13,62 @@
 #include <misc/Color.h>
 #include <random>
 
-class running_state : public state_base {
+template<class InputDevice, class Transmitter>
+class running_state : public state_base<InputDevice, Transmitter> {
   Gem gem_;
   Snake snake_;
   cv::Point dir_;
-  std::random_device dev_;
-  std::mt19937 rng_;
-  std::uniform_int_distribution<std::mt19937::result_type> dist12_;
-  std::uniform_int_distribution<std::mt19937::result_type> dist22_;
 
 public:
-  running_state();
+  running_state(InputDevice& input, Transmitter& client) :
+      state_base<InputDevice, Transmitter>(input, client),
+      gem_(),
+      snake_({cv::Point(13,5)}, cv::Size(23,13)),
+      dir_(1,0)
+  {}
   ~running_state() override = default;
 
-  state_base* action(input in, cv::Mat& mat) override {
-    if (!gem_)
-      gem_ = Gem(cv::Point(dist22_(rng_), dist12_(rng_)));
+  state action() override {
+    while (true) {
+      if (!gem_)
+        gem_.reset();
 
-    switch (in) {
-      case input::up:
-        dir_ = cv::Point(0, -1);
-        break;
+      switch (this->input_.getInput()) {
+        case input::up:
+          dir_ = cv::Point(0, -1);
+          break;
 
-      case input::down:
-        dir_ = cv::Point(0, 1);
-        break;
+        case input::down:
+          dir_ = cv::Point(0, 1);
+          break;
 
-      case input::left:
-        dir_ = cv::Point(-1, 0);
-        break;
+        case input::left:
+          dir_ = cv::Point(-1, 0);
+          break;
 
-      case input::right:
-        dir_ = cv::Point(1, 0);
-        break;
+        case input::right:
+          dir_ = cv::Point(1, 0);
+          break;
 
-      default:
-        break;
+        default:
+          break;
+      }
+
+      if (!snake_.step(dir_, gem_)) {
+        return state::game_over;
+      }
+
+      cv::Mat mat(cv::Size(23,13), CV_8UC3, cv::Scalar(0,0,0));
+      gem_.printTo(mat, Color::YELLOW);
+      snake_.printTo(mat, Color::RED);
+      Printer::show(mat, this->client_, 400);
     }
+  }
 
-    if (!snake_.step(dir_, gem_)) {
-      return new game_over_state;
-    }
-    gem_.printTo(mat, Color::YELLOW);
-    snake_.printTo(mat, Color::RED);
-    return this;
+  void reset() override {
+    snake_ = Snake({cv::Point(13,5)}, cv::Size(23,13));
+    gem_.reset();
+    dir_ = cv::Point(1,0);
   }
 };
 
