@@ -14,14 +14,14 @@
 #include <random>
 
 template<class InputDevice, class Transmitter>
-class running_state : public state_base<InputDevice, Transmitter> {
+class running_state : public state_base<InputDevice> {
   Gem gem_;
   Snake snake_;
   cv::Point dir_;
 
 public:
-  running_state(InputDevice& input, Transmitter& client) :
-      state_base<InputDevice, Transmitter>(input, client),
+  running_state(InputDevice& input) :
+      state_base<InputDevice>(input),
       gem_(),
       snake_({cv::Point(13,5)}, cv::Size(23,13)),
       dir_(1,0)
@@ -35,19 +35,19 @@ public:
 
       switch (this->input_.getInput()) {
         case input::up:
-          dir_ = cv::Point(0, -1);
+          dir_ = cv::Point(0,-1);
           break;
 
         case input::down:
-          dir_ = cv::Point(0, 1);
+          dir_ = cv::Point(0,1);
           break;
 
         case input::left:
-          dir_ = cv::Point(-1, 0);
+          dir_ = cv::Point(-1,0);
           break;
 
         case input::right:
-          dir_ = cv::Point(1, 0);
+          dir_ = cv::Point(1,0);
           break;
 
         default:
@@ -61,7 +61,8 @@ public:
       cv::Mat mat(cv::Size(23,13), CV_8UC3, cv::Scalar(0,0,0));
       gem_.printTo(mat, Color::YELLOW);
       snake_.printTo(mat, Color::RED);
-      Printer::show(mat, this->client_, 400);
+      viewer<Transmitter>::show(mat);
+      std::this_thread::sleep_for(std::chrono::milliseconds(400));
     }
   }
 

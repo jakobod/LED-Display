@@ -12,13 +12,14 @@
 #include <game/gamestate/running_state.h>
 #include <game/gamestate/initial_state.h>
 #include <iostream>
+#include <output/Viewer.h>
 
 template<class InputDevice, class Transmitter>
 class SnakeGame {
   InputDevice input_;
   std::thread t_input_;
-  Transmitter client_;
-  std::vector<state_base<InputDevice, Transmitter>*> states_;
+  viewer<Transmitter>* viewer_;
+  std::vector<state_base<InputDevice>*> states_;
   state state_;
   bool running_;
 
@@ -26,19 +27,18 @@ public:
   SnakeGame(std::string host, std::string port) :
     input_(),
     t_input_(std::ref(input_)),
-    client_(std::move(host), std::move(port)),
+    viewer_(viewer<Transmitter>::instance(std::move(host), std::move(port))),
     states_{
-      new initial_state<InputDevice, Transmitter>(input_, client_),
-      new running_state<InputDevice, Transmitter>(input_, client_),
-      new game_over_state<InputDevice, Transmitter>(input_, client_),
+      new initial_state<InputDevice, Transmitter>(input_),
+      new running_state<InputDevice, Transmitter>(input_),
+      new game_over_state<InputDevice, Transmitter>(input_),
     },
     state_(state::initial),
     running_(true)
-  {
-    cv::namedWindow("gamePane", cv::WINDOW_NORMAL);
-  }
+  {}
 
   ~SnakeGame() {
+    viewer<Transmitter>::trash();
     input_.stop();
     t_input_.join();
   };

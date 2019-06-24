@@ -10,15 +10,16 @@
 #include "state_base.h"
 
 template <class InputDevice, class Transmitter>
-class game_over_state : public state_base<InputDevice, Transmitter> {
+class game_over_state : public state_base<InputDevice> {
 public:
-  game_over_state(InputDevice& input, Transmitter& client) :
-    state_base<InputDevice, Transmitter>(input, client) {};
+  game_over_state(InputDevice& input) :
+    state_base<InputDevice>(input) {};
   ~game_over_state() = default;
 
   state action() override {
     cv::Mat mat(cv::Size(23,13), CV_8UC3, cv::Scalar(0,0,0));
-    Printer::gameOver(mat, this->client_);
+    Printer::gameOver<Transmitter>(mat);
+
     while (true) {
       switch (this->input_.getInput()) {
         case input::start:
@@ -30,7 +31,7 @@ public:
         default:
           break;
       }
-      Printer::show(mat, this->client_, 500);
+      Printer::show<Transmitter>(mat, 500);
     }
   }
 };

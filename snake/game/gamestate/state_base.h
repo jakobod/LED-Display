@@ -15,17 +15,14 @@ enum class state {
   end = 3,
 };
 
-template <class InputDevice, class Transmitter>
+template <class InputDevice>
 class state_base {
 protected:
   InputDevice& input_;
-  Transmitter& client_;
 
 public:
-  state_base(InputDevice& input, Transmitter& client) :
-    input_(input),
-    client_(client)
-  {};
+  explicit state_base(InputDevice& input) :
+    input_(input) {};
   virtual ~state_base() = default;
 
   virtual state action() = 0;
